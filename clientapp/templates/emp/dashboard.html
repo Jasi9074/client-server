@@ -7,7 +7,7 @@
 
 <!-- @MAIN CONTENT -->
 
-<h1>Work Sessions</h1>
+<h1 class="display-6 mb-4">Work Sessions</h1>
 <form action="{% url 'emp:start_work' %}" method="post">
   {% csrf_token %}
   <button class="btn btn-primary" type="submit">Start Work</button>
