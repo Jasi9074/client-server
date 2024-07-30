@@ -2,8 +2,8 @@
 
 ## Todo List
 
-- [ ] User Profile
-- [ ] User Authentication
+- [x] User Profile
+- [x] User Authentication
 - [ ] Timer Tracking
 
 # 🆕 Initializing Project
