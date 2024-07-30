@@ -66,8 +66,8 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### Step 6: Run Server
+### Step 6: Run Server (on Local Network)
 
 ```sh
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
