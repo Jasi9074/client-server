@@ -1,0 +1,33 @@
+{% extends 'emp/base.html' %}
+{% block title %}Welcome to {{block.super}}{% endblock %}
+{% load static %}
+
+{% block content %}
+
+  <!-- @MAIN CONTENT -->
+  <div class="container-fluid d-flex align-items-center" style="height:80vh;">
+
+    <div class="col p-5">
+      <h1 class="display-1 mb-0">LOTUS</h1>
+      <h4 class="text-muted mb-4"><i>time management system</i></h4>
+      <p>Login to continue recording your working time. If this is your first time here, be sure to create an account using the sign up button before logging in.</p>
+      <div class="d-flex gap-3 justify-content-start mt-4">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'emp:user_logout' %}" class="btn btn-primary">Logout</a>
+        {% else %}
+        <a href="{% url 'emp:user_login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'emp:register' %}" class="btn btn-outline-primary">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col p-5 text-center bg-body-secondary border rounded-4 h-50">
+      <img src="{% static '/some_image.png' %}" width="250">
+    </div>
+
+  </div>
+
+  <!-- @FOOTER MAYBE -->
+  <!-- <p class="text-center text-muted">Scroll down for more instructions<i class="fas fa-arrow-down"></i></p> -->
+
+  {% endblock %}
