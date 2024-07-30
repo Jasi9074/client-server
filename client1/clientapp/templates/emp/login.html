@@ -1,0 +1,49 @@
+{% extends 'emp/base.html' %}
+{% block title %}Login at - {{block.super}}{% endblock %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+  <!-- CUSTOM CSS: ANIMATED CIRCLES LOGIN SCREEN -->
+  <link rel="stylesheet" href="{% static 'styles/login.css' %}" type="text/css" />
+
+  <h1 class="display-6">Log In!</h1>
+  <!-- <hr class="my-4 "> -->
+  <br>
+
+  <!-- AUTHENTICATION ERROR MESSAGE -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-danger" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- CUSTOM LOGIN FORM -->
+  <form method="POST" class="ring mx-auto">
+    <i style="--clr:#00ff0a;"></i>
+    <i style="--clr:#ff0057;"></i>
+    <i style="--clr:#fffd44;"></i>
+    {% csrf_token %}
+    <!-- { { form|crispy }} -->
+    <div class="login">
+      <div class="inputBx">
+        <input type="text" class="form-control" placeholder="Username" name="username">
+      </div>
+      <div class="inputBx">
+        <input type="password" class="form-control" placeholder="Password" name="password">
+      </div>
+      <div class="inputBx">
+        <input type="submit" class="btn btn-primary mb-2" name="submit" value="Login">
+      </div>
+      <div class="links">
+        <a href="{% url 'emp:register' %}">No account?</a>
+        <a href="{% url 'emp:register' %}">Sign Up!</a>
+      </div>
+    </div>
+    <!-- TODO: Password Reset -->
+    <!-- <a class="align-middle" href="(% url 'password_reset' %)">Forgotten Your password?</a><br> -->
+  </form>
+
+{% endblock %}
