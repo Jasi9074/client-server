@@ -4,7 +4,9 @@
 
 - [x] User Profile
 - [x] User Authentication
-- [ ] Timer Tracking
+- [x] Simple Timer Tracking
+- [ ] Better Time Tracking Logic
+- [ ] Presentable UI Design
 
 # 🆕 Initializing Project
 

@@ -5,11 +5,40 @@
 
 {% block content %}
 
-  <!-- @MAIN CONTENT -->
-  <div class="container-fluid d-flex align-items-center" style="height:80vh;">
+<!-- @MAIN CONTENT -->
 
-    <h2>Add some cool timer here in the future</h2>
+<h1>Work Sessions</h1>
+<form action="{% url 'emp:start_work' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">Start Work</button>
+</form>
+<table>
+  <thead>
+    <tr>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Duration</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for session in sessions %}
+    <tr>
+      <td>{{ session.start_time }}</td>
+      <td>{{ session.end_time }}</td>
+      <td>{{ session.duration }}</td>
+      <td>
+        {% if not session.end_time %}
+        <form action="{% url 'emp:end_work' session.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit">End Work</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-  </div>
 
-  {% endblock %}
+{% endblock %}

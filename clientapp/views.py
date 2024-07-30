@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from .models import Employee
+from django.shortcuts import render, redirect
+from .models import Employee, WorkSession
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth import authenticate, logout, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils import timezone
 
 # from django.contrib.auth.models import User # Needed for profile update
 
@@ -75,19 +76,36 @@ def register(request):
     return render(request, "emp/register.html", context)
 
 
+@login_required
+def start_work(request):
+    employee = Employee.objects.get(user=request.user)
+    WorkSession.objects.create(employee=employee, start_time=timezone.now())
+    return redirect("emp:dashboard")
+
+
+@login_required
+def end_work(request, session_id):
+    session = WorkSession.objects.get(id=session_id)
+    session.end_time = timezone.now()
+    session.save()
+    return redirect("emp:dashboard")
+
+
+def dashboard(request):
+    if request.user.is_authenticated:
+        # return render(request, "emp/dashboard.html")
+        employee = Employee.objects.get(user=request.user)
+        sessions = WorkSession.objects.filter(employee=employee).order_by("-start_time")
+        return render(request, "emp/dashboard.html", {"sessions": sessions})
+    else:
+        return HttpResponseRedirect(reverse("emp:user_login"))
+
+
 @login_required()
 def user_logout(request):
     username = request.user.first_name + " " + request.user.last_name
     logout(request)
     return HttpResponseRedirect(reverse("emp:goodbye") + f"?username={username}")
-    # return HttpResponseRedirect(reverse('emp:ques_list'))
-
-
-def dashboard(request):
-    if request.user.is_authenticated:
-        return render(request, "emp/dashboard.html")
-    else:
-        return HttpResponseRedirect(reverse("emp:user_login"))
 
 
 def goodbye(request):
