@@ -60,6 +60,12 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
+### Step 6: Create Admin User
+
+```sh
+python manage.py createsuperuser
+```
+
 ### Step 6: Run Server
 
 ```sh
