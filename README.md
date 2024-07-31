@@ -69,5 +69,19 @@ python manage.py createsuperuser
 ### Step 6: Run Server (on Local Network)
 
 ```sh
-python manage.py runserver 0.0.0.0:8000
+./run
+```
+
+### Accessing Server Admin Page
+
+Open the following URL on Server System
+
+```
+localhost:8000/admin
+```
+
+or
+
+```
+127.0.0.1:8080/admin
 ```
