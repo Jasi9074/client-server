@@ -96,7 +96,12 @@ def dashboard(request):
         # return render(request, "emp/dashboard.html")
         employee = Employee.objects.get(user=request.user)
         sessions = WorkSession.objects.filter(employee=employee).order_by("-start_time")
-        return render(request, "emp/dashboard.html", {"sessions": sessions})
+        latest_session = WorkSession.objects.order_by('-start_time').first()
+        context = {
+            'latest_session': latest_session,
+            "sessions": sessions,
+        }
+        return render(request, "emp/dashboard.html", context)
     else:
         return HttpResponseRedirect(reverse("emp:user_login"))
 

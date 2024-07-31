@@ -8,17 +8,25 @@
 <!-- @MAIN CONTENT -->
 
 <h1 class="display-6 mb-4">Work Sessions</h1>
+
+{% if not latest_session.end_time %}
+<form action="{% url 'emp:end_work' latest_session.id %}" method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger" type="submit">End Work</button>
+</form>
+{% else %}
 <form action="{% url 'emp:start_work' %}" method="post">
   {% csrf_token %}
   <button class="btn btn-primary" type="submit">Start Work</button>
 </form>
+{% endif %}
+
 <table class="table">
   <thead>
     <tr>
       <th scope="col">Start Time</th>
       <th scope="col">End Time</th>
       <th scope="col">Duration</th>
-      <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -27,14 +35,6 @@
       <td>{{ session.start_time }}</td>
       <td>{{ session.end_time }}</td>
       <td>{{ session.duration }}</td>
-      <td>
-        {% if not session.end_time %}
-        <form action="{% url 'emp:end_work' session.id %}" method="post">
-          {% csrf_token %}
-          <button class="btn btn-danger" type="submit">End Work</button>
-        </form>
-        {% endif %}
-      </td>
     </tr>
     {% endfor %}
   </tbody>
