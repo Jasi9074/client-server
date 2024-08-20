@@ -14,8 +14,10 @@ from django.utils import timezone
 def login_page(request):
     return render(request, "login.html")
 
+def server_page(request):
+    return render(request, "welcome.html")
 
-def welcome_page(request):
+def client_page(request):
     return render(request, "emp/welcome.html")
 
 
