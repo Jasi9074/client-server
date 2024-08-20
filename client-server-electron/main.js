@@ -9,7 +9,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-  mainWindow.loadURL ("http://192.168.1.36:5050");
+  mainWindow.loadURL ("http://192.168.1.2:5050");/welcome/
   // Open a webpage
   // mainWindow.loadFile('index.html')
   // Open the DevTools.
