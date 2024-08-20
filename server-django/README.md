@@ -1,13 +1,3 @@
-# Client Server
-
-## Todo List
-
-- [x] User Profile
-- [x] User Authentication
-- [x] Simple Timer Tracking
-- [ ] Better Time Tracking Logic
-- [ ] Presentable UI Design
-
 # 🆕 Initializing Project
 
 ### Step 1: Clone the project
@@ -60,28 +50,8 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-### Step 6: Create Admin User
-
-```sh
-python manage.py createsuperuser
-```
-
 ### Step 6: Run Server (on Local Network)
 
 ```sh
 ./run
-```
-
-### Accessing Server Admin Page
-
-Open the following URL on Server System
-
-```
-localhost:8000/admin
-```
-
-or
-
-```
-127.0.0.1:8080/admin
 ```
