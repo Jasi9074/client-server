@@ -4,46 +4,40 @@
 {% load static %}
 
 {% block content %}
-  <!-- CUSTOM CSS: ANIMATED CIRCLES LOGIN SCREEN -->
-  <link rel="stylesheet" href="{% static 'styles/login.css' %}" type="text/css" />
+<h1 class="display-6">Log In!</h1>
+<!-- <hr class="my-4 "> -->
+<br>
 
-  <h1 class="display-6">Log In!</h1>
-  <!-- <hr class="my-4 "> -->
-  <br>
-
-  <!-- AUTHENTICATION ERROR MESSAGE -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-danger" role="alert">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
+<!-- AUTHENTICATION ERROR MESSAGE -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-danger" role="alert">
+  {{ message }}
+</div>
+{% endfor %}
+{% endif %}
 
   <!-- CUSTOM LOGIN FORM -->
-  <form method="POST" class="ring mx-auto">
-    <i style="--clr:#00ff0a;"></i>
-    <i style="--clr:#ff0057;"></i>
-    <i style="--clr:#fffd44;"></i>
-    {% csrf_token %}
-    <!-- { { form|crispy }} -->
-    <div class="login">
-      <div class="inputBx">
-        <input type="text" class="form-control" placeholder="Username" name="username">
-      </div>
-      <div class="inputBx">
-        <input type="password" class="form-control" placeholder="Password" name="password">
-      </div>
-      <div class="inputBx">
-        <input type="submit" class="btn btn-primary mb-2" name="submit" value="Login">
-      </div>
-      <div class="links">
-        <a href="{% url 'emp:register' %}">No account?</a>
-        <a href="{% url 'emp:register' %}">Sign Up!</a>
-      </div>
+<form method="POST">
+  {% csrf_token %}
+  <!-- { { form|crispy }} -->
+  <div class="container container-fluid">
+    <div class="mb-4">
+      <label class="form-label mb-0">Username</label>
+      <input type="text" class="form-control form-control-lg" placeholder="Username" name="username">
     </div>
-    <!-- TODO: Password Reset -->
-    <!-- <a class="align-middle" href="(% url 'password_reset' %)">Forgotten Your password?</a><br> -->
-  </form>
+    <div class="mb-4">
+      <label class="form-label mb-0">Password</label>
+      <input type="password" class="form-control form-control-lg" placeholder="Password" name="password">
+    </div>
+    <div class="mb-4">
+      <input type="submit" class="btn btn-primary mb-2" name="submit" value="Login">
+    </div>
+    <div class="links">
+      <a href="{% url 'emp:register' %}">No account?</a>
+      <a href="{% url 'emp:register' %}">Sign Up!</a>
+    </div>
+  </div>
+</form>
 
 {% endblock %}
