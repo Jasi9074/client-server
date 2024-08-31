@@ -2,6 +2,7 @@
 
 {% block title %}{{user.username}} - {{block.super}}{% endblock %}
 {% load static %}
+{% load session_tags %}
 
 {% block content %}
 
@@ -45,8 +46,7 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Start Time</th>
-      <th scope="col">End Time</th>
+      <th scope="col">Time</th>
       <th scope="col">Duration</th>
       <th scope="col">Description</th>
     </tr>
@@ -64,9 +64,8 @@
     <tr id="session-day-{{ day }}" class="{% if day < today %}collapse{% endif %}">
       {% for session in day_sessions %}
     <tr scope="row" class="session-row" data-day="{{ day }}">
-      <td>{{ session.start_time }}</td>
-      <td>{{ session.end_time }}</td>
-      <td>{{ session.duration }}</td>
+      <td>{{ session.start_time | format_session_time:session.end_time }}</td>
+      <td>{{ session.duration | format_duration }}</td>
       <td>
         <form method="post" action="{% url 'emp:update_session_description' session.id %}">
           {% csrf_token %}
