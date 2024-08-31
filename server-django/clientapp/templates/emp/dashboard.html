@@ -17,7 +17,7 @@
     {% csrf_token %}
     <div class="row">
       <input placeholder="{{ latest_session.description }}" class="col form-control form-control-lg me-2" disabled>
-      <button class="col-auto btn btn-danger" type="submit">End Work</button>
+      <button class="col-auto btn btn-danger" type="submit"><i class="fas fa-stop me-2"></i> End Work</button>
     </div>
   </form>
   {% else %}
@@ -26,7 +26,7 @@
       {% csrf_token %}
       <div class="row">
         <input type="text" name="description" placeholder="Enter description" class="col form-control form-control-lg me-2">
-        <button class="col-auto btn btn-primary" type="submit">Start Work</button>
+        <button class="col-auto btn btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
       </div>
     </form>
   {% endif %}
@@ -36,7 +36,7 @@
     {% csrf_token %}
     <div class="row">
       <input type="text" name="description" placeholder="Enter description" class="col form-control form-control-lg me-2">
-      <button class="col-auto btn btn-primary" type="submit">Start Work</button>
+      <button class="col-auto btn btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
     </div>
   </form>
 {% endif %}
@@ -55,7 +55,7 @@
     {% for day, day_sessions in sessions_grouped_by_day.items %}
     <tr>
       <td colspan="4">
-        <strong class="h2">{{ day }}</strong>
+        <strong class="h3"><i class="me-3 mt-4 fas fa-calendar-days"></i>{{ day }}</strong>
         {% if day < today %}
         <button class="btn btn-link text-secondary show-more-btn" data-day="{{ day }}" style="font-size: 12px;">Show More</button>
         {% endif %}
