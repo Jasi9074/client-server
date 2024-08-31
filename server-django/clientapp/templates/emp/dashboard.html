@@ -9,16 +9,24 @@
 
 <h1 class="display-6 mb-4">Work Sessions</h1>
 
-{% if not latest_session.end_time %}
-<form action="{% url 'emp:end_work' latest_session.id %}" method="post">
-  {% csrf_token %}
-  <button class="btn btn-danger" type="submit">End Work</button>
-</form>
+{% if latest_session %}
+  {% if not latest_session.end_time %}
+  <form action="{% url 'emp:end_work' latest_session.id %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">End Work</button>
+  </form>
+  {% else %}
+  <form action="{% url 'emp:start_work' %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit">Start Work</button>
+  </form>
+  {% endif %}
 {% else %}
-<form action="{% url 'emp:start_work' %}" method="post">
-  {% csrf_token %}
-  <button class="btn btn-primary" type="submit">Start Work</button>
-</form>
+  <!-- If no previous sessions -->
+  <form action="{% url 'emp:start_work' %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit">Start Work</button>
+  </form>
 {% endif %}
 
 <table class="table">
