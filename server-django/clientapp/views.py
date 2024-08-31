@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee, WorkSession
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth import authenticate, logout, login
@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from itertools import groupby
+from datetime import date
 
 # from django.contrib.auth.models import User # Needed for profile update
 
@@ -14,8 +16,10 @@ from django.utils import timezone
 def login_page(request):
     return render(request, "login.html")
 
+
 def server_page(request):
     return render(request, "welcome.html")
+
 
 def client_page(request):
     return render(request, "emp/welcome.html")
@@ -81,7 +85,8 @@ def register(request):
 @login_required
 def start_work(request):
     employee = Employee.objects.get(user=request.user)
-    WorkSession.objects.create(employee=employee, start_time=timezone.now())
+    description = request.POST.get('description', '')  # description from form
+    WorkSession.objects.create(employee=employee, start_time=timezone.now(), description=description)
     return redirect("emp:dashboard")
 
 
@@ -93,15 +98,30 @@ def end_work(request, session_id):
     return redirect("emp:dashboard")
 
 
+@login_required
+def update_session_description(request, session_id):
+    if request.method == "POST":
+        session = get_object_or_404(WorkSession, id=session_id)
+        session.description = request.POST.get("description", "")
+        session.save()
+    return redirect("emp:dashboard")
+
+
 def dashboard(request):
     if request.user.is_authenticated:
-        # return render(request, "emp/dashboard.html")
         employee = Employee.objects.get(user=request.user)
         sessions = WorkSession.objects.filter(employee=employee).order_by("-start_time")
-        latest_session = WorkSession.objects.order_by('-start_time').first()
+        # latest_session = WorkSession.objects.order_by('-start_time').first()
+
+        # Group sessions by date
+        sessions_grouped_by_day = {}
+        for day, group in groupby(sessions, key=lambda s: s.start_time.date()):
+            sessions_grouped_by_day[day] = list(group)
+
+        latest_session = sessions.first()
         context = {
-            'latest_session': latest_session,
-            "sessions": sessions,
+            "latest_session": latest_session,
+            "sessions_grouped_by_day": sessions_grouped_by_day,
         }
         return render(request, "emp/dashboard.html", context)
     else:

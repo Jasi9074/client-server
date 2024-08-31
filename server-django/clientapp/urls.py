@@ -13,6 +13,7 @@ urlpatterns = [
     path('dashboard/',views.dashboard,name = 'dashboard'),
     path('start/', views.start_work, name='start_work'),
     path('end/<int:session_id>/', views.end_work, name='end_work'),
+    path('update-description/<int:session_id>/', views.update_session_description, name='update_session_description'),
     path('login/',views.user_login,name = 'user_login'),
     path('logout/',views.user_logout ,name = 'user_logout'),
     path('register/',views.register,name = 'register'),

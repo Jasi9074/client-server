@@ -20,6 +20,7 @@ class WorkSession(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.employee.name} from {self.start_time} to {self.end_time if self.end_time else 'Ongoing'}"
@@ -27,4 +28,4 @@ class WorkSession(models.Model):
     def duration(self):
         if self.end_time:
             return self.end_time - self.start_time
-        return None
+        return 'Ongoing'

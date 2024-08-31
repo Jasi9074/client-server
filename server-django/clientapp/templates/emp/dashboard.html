@@ -11,23 +11,36 @@
 
 {% if latest_session %}
   {% if not latest_session.end_time %}
+  <!-- If there is an ongoing session -->
   <form action="{% url 'emp:end_work' latest_session.id %}" method="post">
     {% csrf_token %}
-    <button class="btn btn-danger" type="submit">End Work</button>
+    <div class="row">
+      <input placeholder="{{ latest_session.description }}" class="col form-control me-2" disabled>
+      <button class="col-auto btn btn-danger" type="submit">End Work</button>
+    </div>
   </form>
   {% else %}
-  <form action="{% url 'emp:start_work' %}" method="post">
-    {% csrf_token %}
-    <button class="btn btn-primary" type="submit">Start Work</button>
-  </form>
+    <!-- latest session is ended -->
+    <form action="{% url 'emp:start_work' %}" method="post">
+      {% csrf_token %}
+      <div class="row">
+        <input type="text" name="description" placeholder="Enter description" class="col form-control me-2">
+        <button class="col-auto btn btn-primary" type="submit">Start Work</button>
+      </div>
+    </form>
   {% endif %}
 {% else %}
-  <!-- If no previous sessions -->
+  <!-- If no previous sessions (new user) -->
   <form action="{% url 'emp:start_work' %}" method="post">
     {% csrf_token %}
-    <button class="btn btn-primary" type="submit">Start Work</button>
+    <div class="row">
+      <input type="text" name="description" placeholder="Enter description" class="col form-control me-2">
+      <button class="col-auto btn btn-primary" type="submit">Start Work</button>
+    </div>
   </form>
 {% endif %}
+
+<hr class="my-4 py-4"/>
 
 <table class="table">
   <thead>
@@ -35,18 +48,60 @@
       <th scope="col">Start Time</th>
       <th scope="col">End Time</th>
       <th scope="col">Duration</th>
+      <th scope="col">Description</th>
     </tr>
   </thead>
   <tbody>
-    {% for session in sessions %}
-    <tr scope="row">
+    {% for day, day_sessions in sessions_grouped_by_day.items %}
+    <tr>
+      <td colspan="4">
+        <strong class="h2">{{ day }}</strong>
+        {% if day < today %}
+        <button class="btn btn-link text-secondary show-more-btn" data-day="{{ day }}" style="font-size: 12px;">Show More</button>
+        {% endif %}
+      </td>
+    </tr>
+    <tr id="session-day-{{ day }}" class="{% if day < today %}collapse{% endif %}">
+      {% for session in day_sessions %}
+    <tr scope="row" class="session-row" data-day="{{ day }}">
       <td>{{ session.start_time }}</td>
       <td>{{ session.end_time }}</td>
       <td>{{ session.duration }}</td>
+      <td>
+        <form method="post" action="{% url 'emp:update_session_description' session.id %}">
+          {% csrf_token %}
+          <div class="row">
+            <input
+              type="text"
+              name="description"
+              {% if not session.description == "None" %}
+              value="{{ session.description }}"
+              {% endif %}
+              placeholder="Add a description"
+              class="col form-control form-control-sm"
+            >
+            <button type="submit" class="col-auto btn btn-sm btn-primary mt-1">Update</button>
+          </div>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
     </tr>
     {% endfor %}
   </tbody>
 </table>
+
+<script>
+document.querySelectorAll('.show-more-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const day = button.getAttribute('data-day');
+    const rows = document.querySelectorAll(`.session-row[data-day="${day}"]`);
+    rows.forEach(row => row.classList.toggle('collapse'));
+    button.textContent = button.textContent === 'Show More' ? 'Show Less' : 'Show More';
+  });
+});
+</script>
+
 
 
 {% endblock %}
