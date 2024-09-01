@@ -78,7 +78,7 @@ def register(request):
                 photo=request.FILES.get("photo"),
             )
 
-            return HttpResponseRedirect(reverse("emp:user_login"))
+            return HttpResponseRedirect(reverse("emp:server"))
     else:
         form = UserRegistrationForm()
 
