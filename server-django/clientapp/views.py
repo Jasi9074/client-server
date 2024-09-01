@@ -13,12 +13,16 @@ from datetime import date
 # from django.contrib.auth.models import User # Needed for profile update
 
 
+def server_login(request):
+    return render(request, "server/login.html")
+
+
 def login_page(request):
-    return render(request, "login.html")
+    return render(request, "emp/login.html")
 
 
 def server_page(request):
-    return render(request, "welcome.html")
+    return render(request, "server/welcome.html")
 
 
 def client_page(request):
