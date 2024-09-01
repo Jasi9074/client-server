@@ -65,7 +65,7 @@
     <!-- COLLAPSIBLE SESSIONS -->
     {% for session in day_sessions %}
     <tr scope="row" class="session-row {% if day < today %}collapse{% endif %}" data-day="{{ day }}">
-      <td>{{ session.start_time | format_session_time:session.end_time }}</td>
+      <td>{{ session.start_time | time:"h:i A" }} - {{ session.end_time | time:"h:i A" }}</td>
       <td>{{ session.duration | format_duration }}</td>
       <td>
         {% if day == today %}
