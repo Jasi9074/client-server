@@ -26,7 +26,8 @@ def server_page(request):
 
 
 def client_page(request):
-    return render(request, "emp/welcome.html")
+    return HttpResponseRedirect(reverse("emp:user_login"))
+    # return render(request, "emp/welcome.html")
 
 
 def user_login(request):
