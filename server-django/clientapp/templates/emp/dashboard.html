@@ -61,9 +61,10 @@
         {% endif %}
       </td>
     </tr>
-    <tr id="session-day-{{ day }}" class="{% if day < today %}collapse{% endif %}">
-      {% for session in day_sessions %}
-    <tr scope="row" class="session-row" data-day="{{ day }}">
+
+    <!-- COLLAPSIBLE SESSIONS -->
+    {% for session in day_sessions %}
+    <tr scope="row" class="session-row {% if day < today %}collapse{% endif %}" data-day="{{ day }}">
       <td>{{ session.start_time | format_session_time:session.end_time }}</td>
       <td>{{ session.duration | format_duration }}</td>
       <td>
@@ -85,7 +86,7 @@
       </td>
     </tr>
     {% endfor %}
-    </tr>
+
     {% endfor %}
   </tbody>
 </table>

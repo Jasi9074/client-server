@@ -123,9 +123,12 @@ def dashboard(request):
             sessions_grouped_by_day[day] = list(group)
 
         latest_session = sessions.first()
+        today = date.today()
+
         context = {
             "latest_session": latest_session,
             "sessions_grouped_by_day": sessions_grouped_by_day,
+            "today": today,
         }
         return render(request, "emp/dashboard.html", context)
     else:
