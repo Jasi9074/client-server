@@ -90,11 +90,20 @@ def register(request):
 @login_required
 def start_work(request):
     employee = Employee.objects.get(user=request.user)
-    description = request.POST.get("description", "")  # description from form
+    description = request.POST.get("description", "")
+    machine_number = request.POST.get("machine", None)
+
     WorkSession.objects.create(
-        employee=employee, start_time=timezone.now(), description=description
+        employee=employee,
+        start_time=timezone.now(),
+        description=description,
+        machine=machine_number
     )
-    return redirect("emp:dashboard")
+
+    response = redirect("emp:dashboard")
+    if machine_number:
+        response.set_cookie("machine", machine_number, max_age=30*24*60*60)  # 30 days
+    return response
 
 
 @login_required

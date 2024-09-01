@@ -24,6 +24,7 @@ class WorkSession(models.Model):
     description = models.TextField(blank=True, null=True)
     paused = models.BooleanField(default=False)
     pause_time = models.DateTimeField(null=True, blank=True)
+    machine = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.employee.name} from {self.start_time} to {self.end_time if self.end_time else 'Ongoing'}"

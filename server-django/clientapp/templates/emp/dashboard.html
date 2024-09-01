@@ -38,6 +38,9 @@
     <form action="{% url 'emp:start_work' %}" method="post">
       {% csrf_token %}
       <div class="row">
+        <div class="col-sm-2">
+          <input type="number" id="machine_input" name="machine" placeholder="Machine No." class="form-control form-control-lg me-2">
+        </div>
         <input type="text" name="description" placeholder="Enter description" class="col form-control form-control-lg me-2">
         <button class="col-auto btn btn-lg btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
       </div>
@@ -48,6 +51,9 @@
   <form action="{% url 'emp:start_work' %}" method="post">
     {% csrf_token %}
     <div class="row">
+      <div class="col-sm-2">
+        <input type="number" id="machine_input" name="machine" placeholder="Machine No." class="form-control form-control-lg me-2">
+      </div>
       <input type="text" name="description" placeholder="Enter description" class="col form-control form-control-lg me-2">
       <button class="col-auto btn btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
     </div>
@@ -108,6 +114,8 @@
   </tbody>
 </table>
 
+<!-- COLLAPSE CLASS -->
+
 <script>
 document.querySelectorAll('.show-more-btn').forEach(button => {
   button.addEventListener('click', () => {
@@ -119,6 +127,28 @@ document.querySelectorAll('.show-more-btn').forEach(button => {
 });
 </script>
 
+<!-- MACHINE NUMBER IN LOCALSTORAGE -->
 
+<script>
+window.onload = function() {
+  var machineInput = document.getElementById("machine_input");
+  var machineNumber = localStorage.getItem("machine");
+  if (!machineNumber) {
+    machineNumber = getCookie("machine");
+  }
+  if (machineNumber) {
+    machineInput.value = machineNumber;
+  }
+}
+document.querySelector("form").onsubmit = function() {
+  var machineInput = document.getElementById("machine_input").value;
+  localStorage.setItem("machine", machineInput);
+}
+function getCookie(name) {
+  var value = `; ${document.cookie}`;
+  var parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+</script>
 
 {% endblock %}
