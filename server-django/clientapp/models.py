@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 def user_directory_path(self, filename):
@@ -21,6 +22,8 @@ class WorkSession(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True, null=True)
+    paused = models.BooleanField(default=False)
+    pause_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.employee.name} from {self.start_time} to {self.end_time if self.end_time else 'Ongoing'}"
@@ -28,4 +31,6 @@ class WorkSession(models.Model):
     def duration(self):
         if self.end_time:
             return self.end_time - self.start_time
-        return 'Ongoing'
+        if self.paused and self.pause_time:
+            return self.pause_time - self.start_time
+        return timezone.now() - self.start_time

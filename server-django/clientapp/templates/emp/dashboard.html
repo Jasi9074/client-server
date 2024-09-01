@@ -8,25 +8,38 @@
 
 <!-- @MAIN CONTENT -->
 
-<h1 class="display-6 mb-4">Work Sessions</h1>
+<h1 class="display-6 mb-4">Work Session</h1>
 
 {% if latest_session %}
   {% if not latest_session.end_time %}
-  <!-- If there is an ongoing session -->
-  <form action="{% url 'emp:end_work' latest_session.id %}" method="post">
-    {% csrf_token %}
-    <div class="row">
+    <!-- If there is an ongoing session -->
+    <div class="row mb-2">
       <input placeholder="{{ latest_session.description }}" class="col form-control form-control-lg me-2" disabled>
-      <button class="col-auto btn btn-danger" type="submit"><i class="fas fa-stop me-2"></i> End Work</button>
+      {% if latest_session.paused %}
+        <!-- If session is paused -->
+        <form action="{% url 'emp:resume_work' latest_session.id %}" method="post" class="col-auto">
+          {% csrf_token %}
+          <button class="btn btn-lg btn-success" type="submit"><i class="fas fa-play me-2"></i> Resume Work</button>
+        </form>
+      {% else %}
+        <!-- If session is active -->
+        <form action="{% url 'emp:pause_work' latest_session.id %}" method="post" class="col-auto">
+          {% csrf_token %}
+          <button class="btn btn-lg btn-warning" type="submit"><i class="fas fa-pause me-2"></i> Pause Work</button>
+        </form>
+        <form action="{% url 'emp:end_work' latest_session.id %}" method="post" class="col-auto">
+          {% csrf_token %}
+          <button class="btn btn-lg btn-danger" type="submit"><i class="fas fa-stop me-2"></i> End Work</button>
+        </form>
+      {% endif %}
     </div>
-  </form>
   {% else %}
-    <!-- latest session is ended -->
+    <!-- If the latest session is ended -->
     <form action="{% url 'emp:start_work' %}" method="post">
       {% csrf_token %}
       <div class="row">
         <input type="text" name="description" placeholder="Enter description" class="col form-control form-control-lg me-2">
-        <button class="col-auto btn btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
+        <button class="col-auto btn btn-lg btn-primary" type="submit"><i class="fas fa-play me-2"></i> Start Work</button>
       </div>
     </form>
   {% endif %}
