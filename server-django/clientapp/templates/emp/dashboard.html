@@ -55,9 +55,9 @@
     {% for day, day_sessions in sessions_grouped_by_day.items %}
     <tr>
       <td colspan="4">
-        <strong class="h3"><i class="me-3 mt-4 fas fa-calendar-days"></i>{{ day }}</strong>
+        <strong class="{% if day < today %}h4{% else %}h3{% endif %}"><i class="me-3 mt-4 fas fa-calendar-days"></i>{{ day }}</strong>
         {% if day < today %}
-        <button class="btn btn-link text-secondary show-more-btn" data-day="{{ day }}" style="font-size: 12px;">Show More</button>
+        <button class="btn btn-link show-more-btn" data-day="{{ day }}" style="font-size: 12px;">Show More</button>
         {% endif %}
       </td>
     </tr>
@@ -68,6 +68,7 @@
       <td>{{ session.start_time | format_session_time:session.end_time }}</td>
       <td>{{ session.duration | format_duration }}</td>
       <td>
+        {% if day == today %}
         <form method="post" action="{% url 'emp:update_session_description' session.id %}">
           {% csrf_token %}
           <div class="row">
@@ -83,6 +84,9 @@
             <button type="submit" class="col-auto btn btn-sm btn-outline-info mt-1">Update</button>
           </div>
         </form>
+        {% else %}
+        {{ session.description }}
+        {% endif %}
       </td>
     </tr>
     {% endfor %}
