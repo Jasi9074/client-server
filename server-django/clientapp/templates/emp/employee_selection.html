@@ -1,0 +1,278 @@
+{% extends 'emp/base.html' %}
+{% load static %}
+{% block title %}Select Employee - {{ block.super }}{% endblock %}
+
+{% block content %}
+<style>
+    .employee-card {
+        width: 150px;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        background-color: #27ae60; /* Green for active */
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        transition: background-color 0.3s ease; /* Smooth transition */
+        cursor: pointer;
+    }
+
+    .employee-card.logged-out {
+        background-color: #c0392b; /* Red for logged-out */
+    }
+
+    .employee-card h5 {
+        margin-top: 10px;
+        color: black;
+        font-size: 14px;
+        text-align: center;
+        background-color: white; /* White box for employee name */
+        padding: 5px 10px;
+        border-radius: 5px;
+        width: 100%; /* Ensure it spans the width */
+    }
+
+    .employee-card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    /* Modal styling */
+    #passwordModal .modal-dialog {
+        max-width: 600px; /* Increase width */
+        margin: auto; /* Center the modal */
+    }
+
+    #passwordModal .modal-content {
+        border-radius: 15px; /* Rounded edges */
+        background-color: #f0f9ff; /* Light blue background */
+        border: 2px solid #d1e7dd; /* Soft border color */
+        padding: 20px;
+        position: relative; /* To position close button absolutely */
+    }
+
+    #passwordModal .modal-header {
+        background-color: #b1e0d2; /* Cute soft green header */
+        border: none;
+        border-radius: 15px 15px 0 0;
+        text-align: center; /* Center the title */
+        margin-bottom: 10px; /* Space between header and content */
+    }
+
+    #passwordModal .modal-title {
+        color: #333;
+        font-size: 18px;
+    }
+
+    #passwordModal .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Arrow button styling */
+    .arrow-btn {
+        background-color: #28a745; /* Green background */
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .arrow-btn:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+
+    /* Virtual keyboard container styling */
+    #keyboard-container {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .virtual-keyboard {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr); /* 10 keys per row */
+        gap: 5px; /* Adjusted gap for closer buttons */
+        justify-content: center;
+    }
+
+    .virtual-keyboard button {
+        width: 35px; /* Smaller width for keys */
+        height: 35px; /* Smaller height */
+        font-size: 12px; /* Smaller font size */
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 8px; /* More rounded buttons */
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    .virtual-keyboard button:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05); /* Slightly scale up on hover */
+    }
+
+    .virtual-keyboard button:active {
+        background-color: #d0d0d0;
+    }
+
+    /* Close button styling */
+    .close-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #d9534f; /* Red close button */
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        background: #c9302c;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4"></h2>
+    <div class="row justify-content-center">
+        {% for employee in employees %}
+        <div class="col-md-2 col-sm-4 text-center mb-4">
+            <div class="employee-card {% if employee.user.username == logged_out_employee_username %}logged-out{% endif %}" 
+                 data-bs-toggle="modal" 
+                 data-bs-target="#passwordModal" 
+                 onclick="setEmployee('{{ employee.user.username }}')">
+                {% if employee.photo %}
+                <img src="{{ employee.photo.url }}" alt="{{ employee.name }}">
+                {% else %}
+                <img src="{% static 'default_profile.png' %}" alt="{{ employee.name }}">
+                {% endif %}
+                <h5>{{ employee.name }}</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"> <!-- Ensure modal is centered -->
+        <div class="modal-content">
+            <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close">&times;</button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">Log In</h5>
+            </div>
+            <form method="POST" action="{% url 'emp:employee_selection' %}" id="loginForm">
+                {% csrf_token %}
+                <input type="hidden" id="username" name="username"> <!-- Hidden input to store username -->
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="password" class="form-control" id="password" name="password" style="flex-grow: 1;">
+                            <button type="submit" class="arrow-btn" aria-label="Login">&#10145;</button> <!-- Green arrow button -->
+                        </div>
+                        <div id="keyboard-container" class="virtual-keyboard"></div> <!-- Virtual keyboard inside modal body -->
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="text-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Virtual Keyboard JavaScript -->
+<script>
+    let currentInput = "password"; // Default focus on password
+
+    // Create virtual keyboard layout inside password modal
+    function createKeyboard() {
+        const keyboardContainer = document.getElementById('keyboard-container');
+        const keys = [
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], // Numbers
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], // Uppercase letters
+            ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'], // Uppercase letters
+            ['U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd'], // Uppercase letters
+            ['e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],  // Lowercase letters
+            ['o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x'], // Lowercase letters
+            ['y', 'z', '@', '&', 'Backspace'] // Lowercase letters
+        ];
+
+        keys.forEach(rowKeys => {
+            const row = document.createElement('div');
+            row.className = 'virtual-keyboard';
+            keyboardContainer.appendChild(row);
+
+            rowKeys.forEach(key => {
+                const button = document.createElement('button');
+                button.textContent = key === 'Backspace' ? '⮨' : key; // Change Backspace to an arrow symbol
+                button.onclick = (event) => {
+                    event.preventDefault(); // Prevent default action
+                    handleKeyPress(key);
+                };
+                row.appendChild(button);
+            });
+        });
+    }
+
+    // Handle key press from virtual keyboard
+    function handleKeyPress(key) {
+        const inputElement = document.getElementById(currentInput);
+
+        if (key === 'Backspace') {
+            inputElement.value = inputElement.value.slice(0, -1); // Remove the last character
+        } else {
+            inputElement.value += key; // Add the character
+        }
+
+        // Keep focus on the input field
+        inputElement.focus();
+    }
+
+    // Set the current input field
+    function setEmployee(username) {
+        document.getElementById('username').value = username;
+        // Open the modal
+        const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+        passwordModal.show();
+    }
+
+    // Close modal and redirect to employee selection
+    function closeModalAndRedirect() {
+        window.location.href = "{% url 'emp:employee_selection' %}"; // Redirect to employee selection page
+    }
+
+    // Initialize the keyboard when the modal is shown
+    document.addEventListener('DOMContentLoaded', () => {
+        createKeyboard();
+        document.getElementById('closeModalBtn').addEventListener('click', closeModalAndRedirect); // Close button event
+    });
+</script>
+
+{% endblock %}

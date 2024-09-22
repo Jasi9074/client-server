@@ -12,6 +12,7 @@ class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     photo = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
+    is_working = models.BooleanField(default=False)
 
     def __str__(self):
         return "profile {}".format(self.user.username)
@@ -24,10 +25,14 @@ class WorkSession(models.Model):
     description = models.TextField(blank=True, null=True)
     paused = models.BooleanField(default=False)
     pause_time = models.DateTimeField(null=True, blank=True)
-    machine = models.IntegerField(blank=True, null=True)
+    machine = models.CharField(max_length=10, blank=True, null=True)
+    complaint = models.CharField(max_length=255, blank=True, null=True)
+    issue = models.CharField(max_length=255, blank=True, null=True)
+    confirmed = models.BooleanField(default=False)  # Add this to store confirmation status
 
     def __str__(self):
         return f"{self.employee.name} from {self.start_time} to {self.end_time if self.end_time else 'Ongoing'}"
+
 
     def duration(self):
         if self.end_time:
