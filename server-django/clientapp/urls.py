@@ -29,5 +29,6 @@ urlpatterns = [
     path('complaint_selection<int:page_id>/', views.complaint_selection, name='complaint_selection'),
     path('logout_and_redirect/', views.logout_and_redirect, name='logout_and_redirect'),
     path('save_complaint/', views.save_complaint, name='save_complaint'),
+    path('tempend/', views.temp_end_work, name='temp_end_work'), # temp fix
 
 ]

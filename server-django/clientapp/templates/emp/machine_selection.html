@@ -77,4 +77,38 @@
         </form>
     </div>
 </div>
+
+
+
+{% if request.user.employee.is_working %}
+<div class="modal fade" id="workModal" tabindex="-1" aria-labelledby="workModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="workModalLabel">End Work Session</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You are currently marked as working. Would you like to end your work session?
+      </div>
+      <div class="modal-footer">
+        <form method="POST" action="{% url 'emp:temp_end_work' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">End Work</button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- trigger if is_working -->
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    var workModal = new bootstrap.Modal(document.getElementById('workModal'));
+    workModal.show();
+  });
+</script>
+{% endif %}
+
 {% endblock %}

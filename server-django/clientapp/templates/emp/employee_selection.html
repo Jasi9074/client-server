@@ -158,9 +158,9 @@
     <div class="row justify-content-center">
         {% for employee in employees %}
         <div class="col-md-2 col-sm-4 text-center mb-4">
-            <div class="employee-card {% if employee.user.username == logged_out_employee_username %}logged-out{% endif %}" 
-                 data-bs-toggle="modal" 
-                 data-bs-target="#passwordModal" 
+            <div class="employee-card {% if employee.is_working %}logged-out{% endif %}"
+                 data-bs-toggle="modal"
+                 data-bs-target="#passwordModal"
                  onclick="setEmployee('{{ employee.user.username }}')">
                 {% if employee.photo %}
                 <img src="{{ employee.photo.url }}" alt="{{ employee.name }}">

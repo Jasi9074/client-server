@@ -200,7 +200,7 @@
             }).then(response => response.json())
               .then(data => {
                 if (data.status === 'success') {
-                    window.location.href = '{% url "emp:employee_selection" %}';  // Redirect on success
+                    window.location.href = '{% url "emp:logout_and_redirect" %}';  // logout on success
                 } else {
                     console.error('Failed to save complaint:', data.message);
                 }

@@ -75,6 +75,14 @@ def start_work(request):
 
 
 @login_required
+def temp_end_work(request):
+    employee = Employee.objects.get(user=request.user)
+    employee.is_working = False
+    employee.save()
+    return redirect('emp:machine_selection')
+
+
+@login_required
 def end_work(request, session_id):
     employee = Employee.objects.get(user=request.user)
     employee.is_working = False
@@ -222,6 +230,11 @@ def logout_and_redirect(request):
     # Get the username of the logged-out employee and store it in the session
     logged_out_employee_username = request.user.username
     request.session['logged_out_employee_username'] = logged_out_employee_username
+
+    employee = Employee.objects.get(user=request.user)
+    # HACK: TOGGLE EMP WORKING STATUS
+    employee.is_working = True
+    employee.save()
 
     # Perform the logout
     logout(request)
