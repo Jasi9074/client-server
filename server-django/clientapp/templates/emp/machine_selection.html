@@ -81,8 +81,8 @@
 
 
 {% if request.user.employee.is_working %}
-<div class="modal fade" id="workModal" tabindex="-1" aria-labelledby="workModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal fade" id="workModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="workModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="workModalLabel">End Work Session</h5>
@@ -96,7 +96,8 @@
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">End Work</button>
         </form>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- 💡 INFO: If closed, the timer will continue unable to stop after a new worksession -->
+        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
       </div>
     </div>
   </div>
