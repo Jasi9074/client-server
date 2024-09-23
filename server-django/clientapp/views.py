@@ -77,9 +77,17 @@ def start_work(request):
 @login_required
 def temp_end_work(request):
     employee = Employee.objects.get(user=request.user)
+    work_session = WorkSession.objects.filter(employee=employee, end_time__isnull=True).last()
+
+    if work_session:
+        work_session.end_time = timezone.now()
+        work_session.save()
+
     employee.is_working = False
     employee.save()
-    return redirect('emp:machine_selection')
+
+    logout(request)
+    return redirect('emp:employee_selection')
 
 
 @login_required
