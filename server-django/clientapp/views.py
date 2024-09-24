@@ -2,30 +2,26 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee, WorkSession
 from .forms import LoginForm, UserRegistrationForm
 from django.contrib.auth import authenticate, logout, login
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from itertools import groupby
 from datetime import date
-from django.http import JsonResponse
+import json
 
 def server_login(request):
     return render(request, "server/login.html")
 
-
 def login_page(request):
     return render(request, "emp/login.html")
-
 
 def server_page(request):
     return render(request, "server/welcome.html")
 
-
 def client_page():
     return HttpResponseRedirect(reverse("emp:employee_selection"))
-
 
 def register(request):
     if request.user.is_authenticated:
@@ -49,9 +45,7 @@ def register(request):
         form = UserRegistrationForm()
 
     context = {"form": form}
-
     return render(request, "emp/register.html", context)
-
 
 @login_required
 def start_work(request):
@@ -73,7 +67,6 @@ def start_work(request):
         response.set_cookie("machine", machine_number, max_age=30*24*60*60)  # 30 days
     return response
 
-
 @login_required
 def temp_end_work(request):
     employee = Employee.objects.get(user=request.user)
@@ -89,7 +82,6 @@ def temp_end_work(request):
     logout(request)
     return redirect('emp:employee_selection')
 
-
 @login_required
 def end_work(request, session_id):
     employee = Employee.objects.get(user=request.user)
@@ -100,7 +92,6 @@ def end_work(request, session_id):
     session.save()
     return redirect("emp:dashboard")
 
-
 @login_required
 def pause_work(request, session_id):
     session = WorkSession.objects.get(id=session_id)
@@ -108,7 +99,6 @@ def pause_work(request, session_id):
     session.pause_time = timezone.now()
     session.save()
     return redirect("emp:dashboard")
-
 
 @login_required
 def resume_work(request, session_id):
@@ -121,7 +111,6 @@ def resume_work(request, session_id):
         session.save()
     return redirect("emp:dashboard")
 
-
 @login_required
 def update_session_description(request, session_id):
     if request.method == "POST":
@@ -130,7 +119,7 @@ def update_session_description(request, session_id):
         session.save()
     return redirect("emp:dashboard")
 
-
+@login_required
 def dashboard(request):
     if request.user.is_authenticated:
         employee = Employee.objects.get(user=request.user)
@@ -152,13 +141,11 @@ def dashboard(request):
     else:
         return HttpResponseRedirect(reverse("emp:employee_selection"))
 
-
 @login_required
 def user_logout(request):
     username = request.user.first_name + " " + request.user.last_name
     logout(request)
     return HttpResponseRedirect(reverse("emp:goodbye") + f"?username={username}")
-
 
 def goodbye(request):
     username = request.GET.get("username")
@@ -166,11 +153,19 @@ def goodbye(request):
         username = "User"
     return render(request, "emp/goodbye.html", {"username": username})
 
-
 def machine_selection(request):
     context = {
         'range': range(1, 25)  # Machines M1 to M24
     }
+    
+    # Get the current employee
+    employee = Employee.objects.get(user=request.user)
+    # Get the last work session
+    work_session = WorkSession.objects.filter(employee=employee, end_time__isnull=True).last()
+
+    if work_session:
+        context['issue'] = work_session.issue  # Retrieve the current issue from the work session
+
     return render(request, 'emp/machine_selection.html', context)
 
 def select_machine(request):
@@ -184,11 +179,10 @@ def select_machine(request):
         except Employee.DoesNotExist:
             return redirect('emp:machine_selection')  # Handle case where Employee is not found
 
-        # Create or update WorkSession based on your needs
+        # Create a WorkSession
         WorkSession.objects.create(
             employee=employee,
             start_time=timezone.now(),
-            description=f'Selected machine: M{selected_machine}',
             machine=selected_machine  # Assign selected machine
         )
 
@@ -198,10 +192,22 @@ def select_machine(request):
     return redirect('emp:machine_selection')
 
 def complaint_selection(request, page_id):
+    # Retrieve the last work session for the current employee
+    employee = Employee.objects.get(user=request.user)
+    work_session = WorkSession.objects.filter(employee=employee, end_time__isnull=True).last()
+
+    selected_issue = None
+    if work_session and work_session.issue:
+        selected_issue = work_session.issue  # Fetch the issue from the work session
+
+    complaints = range(1, 13)  # Example complaints; replace with your actual query or model
+
     context = {
         'page_id': page_id,
-        'complaints': range(1, 13)  # This creates a list of numbers from 1 to 12
+        'complaints': complaints,
+        'selected_issue': selected_issue,  # Pass the selected issue to the template
     }
+
     return render(request, 'emp/complaint_selection.html', context)
 
 def employee_selection(request):
@@ -240,15 +246,12 @@ def logout_and_redirect(request):
     request.session['logged_out_employee_username'] = logged_out_employee_username
 
     employee = Employee.objects.get(user=request.user)
-    # HACK: TOGGLE EMP WORKING STATUS
     employee.is_working = True
     employee.save()
 
     # Perform the logout
     logout(request)
     return redirect('emp:employee_selection')
-import json
-
 
 def save_complaint(request):
     if request.method == 'POST':
@@ -257,7 +260,6 @@ def save_complaint(request):
             complaint = data.get('complaint')
             issue = data.get('issue')
 
-            # Assuming you're retrieving the current employee's work session
             employee = Employee.objects.get(user=request.user)
             work_session = WorkSession.objects.filter(employee=employee, end_time__isnull=True).last()
 

@@ -22,9 +22,9 @@ class WorkSession(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
-    description = models.TextField(blank=True, null=True)
-    paused = models.BooleanField(default=False)
-    pause_time = models.DateTimeField(null=True, blank=True)
+    #description = models.TextField(blank=True, null=True)
+    #paused = models.BooleanField(default=False)
+    #pause_time = models.DateTimeField(null=True, blank=True)
     machine = models.CharField(max_length=10, blank=True, null=True)
     complaint = models.CharField(max_length=255, blank=True, null=True)
     issue = models.CharField(max_length=255, blank=True, null=True)
@@ -37,6 +37,6 @@ class WorkSession(models.Model):
     def duration(self):
         if self.end_time:
             return self.end_time - self.start_time
-        if self.paused and self.pause_time:
-            return self.pause_time - self.start_time
-        return timezone.now() - self.start_time
+        #if self.paused and self.pause_time:
+            #return self.pause_time - self.start_time
+        #return timezone.now() - self.start_time

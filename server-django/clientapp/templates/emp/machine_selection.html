@@ -1,5 +1,5 @@
 {% extends 'emp/base.html' %}
-{% block title %}Choose an Option - {{ block.super }}{% endblock %}
+{% block title %}Select a Machine - {{ block.super }}{% endblock %}
 
 {% block content %}
 <style>
@@ -55,22 +55,70 @@
         background-color: #505050;
     }
 
+    /* Center End of Task */
+    .modal-title {
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Start time container */
+    .start-time-container {
+        text-align: left;
+    }
+
+    .start-time-header {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    /* Oval shape for Start Time and End Work box */
+    .start-time-box {
+        background-color: #f0f0f0;
+        padding: 10px 20px;
+        border-radius: 50px; /* Oval shape */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        font-weight: bold;
+        font-size: 16px;
+        display: inline-block; /* So that the box adjusts to content size */
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: space-between; /* Align start time on left and end work button on right */
+        align-items: center;
+    }
+
+    /* Oval shape for End Work button */
+    .btn-danger {
+        border-radius: 50px; /* Oval shape for the button */
+        padding: 10px 30px; /* Adjusting padding for oval shape */
+    }
+
+    /* Oval shape for issue display */
+    .issue-box {
+        background-color: #e0e0e0; /* Light grey background */
+        padding: 15px 30px; /* Padding for the box */
+        border-radius: 50px; /* Oval shape */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center; /* Center the text */
+        margin: 0 auto; /* Center the box horizontally */
+        max-width: 80%; /* Maximum width for the oval box */
+    }
 </style>
 
 <div class="p-3 p-md-5 m-md-3 text-center bg-body-tertiary border rounded-4">
     <div class="col-md-10 p-lg-5 mx-auto my-5 option-box">
-        <h1 class="display-4 mb-5">Choose an Option</h1>
+        <h1 class="display-4 mb-5">Select a Machine</h1>
         <form method="post" action="{% url 'emp:select_machine' %}">
             {% csrf_token %}
             <div class="machine-button-container">
-                <!-- Generate 24 buttons M1 to M24 -->
                 {% for i in range %}
                 <button type="submit" class="machine-button" name="machine" value="{{ i }}">
                     M{{ i }}
                 </button>
                 {% endfor %}
             </div>
-            <!-- Back button -->
             <div>
                 <button type="button" class="back-button" onclick="window.location.href='{% url 'emp:employee_selection' %}'">Back</button>
             </div>
@@ -78,37 +126,47 @@
     </div>
 </div>
 
-
-
 {% if request.user.employee.is_working %}
 <div class="modal fade" id="workModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="workModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="workModalLabel">End Work Session</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        You are currently marked as working. Would you like to end your work session?
-      </div>
-      <div class="modal-footer">
-        <form method="POST" action="{% url 'emp:temp_end_work' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">End Work</button>
-        </form>
-        <!-- 💡 INFO: If closed, the timer will continue unable to stop after a new worksession -->
-        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-      </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="workModalLabel">END OF WORK</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="issue-box">
+                    {% if issue %}
+                        <p>{{ issue }}</p> <!-- Display the selected issue here -->
+                    {% else %}
+                        <p>No issue selected.</p> <!-- Fallback if no issue is available -->
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <!-- Start Time on the left -->
+                <div class="start-time-container">
+                    <div class="start-time-header">START WORK</div>
+                    <div class="start-time-box">{{ request.user.employee.worksession_set.last.start_time|date:"h:i A" }}</div>
+                </div>
+
+                <!-- End Work Button on the right -->
+                <form method="POST" action="{% url 'emp:temp_end_work' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">END WORK</button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- trigger if is_working -->
 <script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
-    var workModal = new bootstrap.Modal(document.getElementById('workModal'));
-    workModal.show();
-  });
+    document.addEventListener("DOMContentLoaded", function () {
+        var workModal = new bootstrap.Modal(document.getElementById('workModal'));
+        workModal.show();
+    });
 </script>
 {% endif %}
 
