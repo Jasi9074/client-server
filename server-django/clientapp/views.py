@@ -157,7 +157,7 @@ def machine_selection(request):
     context = {
         'range': range(1, 25)  # Machines M1 to M24
     }
-    
+
     # Get the current employee
     employee = Employee.objects.get(user=request.user)
     # Get the last work session
@@ -234,9 +234,17 @@ def employee_selection(request):
 
     # Fetch all employees to display in the profile selection page
     employees = Employee.objects.all()
+    employees_with_latest_issues = []
+    for employee in employees:
+        latest_work_session = WorkSession.objects.filter(employee=employee).order_by('-start_time').first()
+        employees_with_latest_issues.append({
+            'employee': employee,
+            'session': latest_work_session
+        })
+
     logged_out_employee_username = request.session.get('logged_out_employee_username', None)
     return render(request, 'emp/employee_selection.html', {
-        'employees': employees,
+        'employees_with_latest_issues': employees_with_latest_issues,
         'logged_out_employee_username': logged_out_employee_username
     })
 
