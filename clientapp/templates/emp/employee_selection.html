@@ -1,0 +1,314 @@
+{% extends 'emp/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.2;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .employee-card {
+        position: relative;
+        width: 200px;
+        height: 270px;
+        margin: 10px;
+        padding: 10px;
+        background-color: #27ae60; /* Green for active */
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+
+    .employee-card.logged-out {
+        background-color: #c0392b; /* Red for logged-out */
+        animation: blink 1s infinite;
+    }
+
+    
+.employee-card h5 {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 80%;
+}
+    
+
+.employee-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-top: 40px; /* Space below the name box */
+}
+
+    .employee-card .issue-box {
+        background-color: white;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 12px;
+        display: inline-block;
+        margin-top: 5px;
+        text-align: center;
+        max-width: 80%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #passwordModal .modal-dialog {
+        max-width: 600px;
+        margin: auto;
+    }
+
+    #passwordModal .modal-content {
+        border-radius: 15px;
+        background-color: #f0f9ff;
+        border: 2px solid #d1e7dd;
+        padding: 20px;
+        position: relative;
+    }
+
+    #passwordModal .modal-header {
+        background-color: #b1e0d2;
+        border: none;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #passwordModal .modal-title {
+        color: #333;
+        font-size: 18px;
+    }
+
+    #passwordModal .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .arrow-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .arrow-btn:hover {
+        background-color: #218838;
+    }
+
+    #keyboard-container {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .virtual-keyboard {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .virtual-keyboard button {
+        width: 35px;
+        height: 35px;
+        font-size: 12px;
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .virtual-keyboard button:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+    }
+
+    .virtual-keyboard button:active {
+        background-color: #d0d0d0;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #d9534f;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        background: #c9302c;
+    }
+
+    /* Use CSS grid to prevent card overlap */
+    .employee-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Cards will resize */
+        gap: 20px;
+    }
+</style>
+
+<div class="employee-container">
+    {% for item in employees_with_latest_issues %}
+    <div class="employee-card {% if item.employee.is_working %}logged-out{% endif %}"
+         data-bs-toggle="modal"
+         data-bs-target="#passwordModal"
+         onclick="setEmployee('{{ item.employee.user.username }}')">
+
+        <h5>{{ item.employee.name }}</h5> <!-- Employee name at the top -->
+
+        {% if item.employee.photo %}
+        <img src="{{ item.employee.photo.url }}" alt="{{ item.employee.name }}">
+        {% else %}
+        <img src="{% static 'default_profile.png' %}" alt="{{ item.employee.name }}">
+        {% endif %}
+
+        {% if item.employee.is_working and item.session %}
+            <div class="issue-box">{{ item.session.issue }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+
+</div>
+
+<!-- Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close">&times;</button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">Log In</h5>
+            </div>
+            <form method="POST" action="{% url 'emp:employee_selection' %}" id="loginForm">
+                {% csrf_token %}
+                <input type="hidden" id="username" name="username">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="password" class="form-control" id="password" name="password" style="flex-grow: 1;">
+                            <button type="submit" class="arrow-btn" aria-label="Login">&#10145;</button>
+                        </div>
+                        <div id="keyboard-container" class="virtual-keyboard"></div>
+                    </div>
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="text-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentInput = "password"; // Default focus on password
+
+    // Create virtual keyboard layout inside password modal
+    function createKeyboard() {
+        const keyboardContainer = document.getElementById('keyboard-container');
+        const keys = [
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], // Numbers
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], // Uppercase letters
+            ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'], // Uppercase letters
+            ['U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd'], // Uppercase letters
+            ['e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],  // Lowercase letters
+            ['o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x'], // Lowercase letters
+            ['y', 'z', '@', '&', 'Backspace'] // Lowercase letters
+        ];
+
+        keys.forEach(rowKeys => {
+            const row = document.createElement('div');
+            row.className = 'virtual-keyboard';
+            keyboardContainer.appendChild(row);
+
+            rowKeys.forEach(key => {
+                const button = document.createElement('button');
+                button.textContent = key === 'Backspace' ? '⮨' : key; // Change Backspace to an arrow symbol
+                button.onclick = (event) => {
+                    event.preventDefault(); // Prevent default action
+                    handleKeyPress(key);
+                };
+                row.appendChild(button);
+            });
+        });
+    }
+
+    // Handle key press from virtual keyboard
+    function handleKeyPress(key) {
+        const inputElement = document.getElementById(currentInput);
+
+        if (key === 'Backspace') {
+            inputElement.value = inputElement.value.slice(0, -1); // Remove the last character
+        } else {
+            inputElement.value += key; // Add the character
+        }
+
+        // Keep focus on the input field
+        inputElement.focus();
+    }
+
+    // Set the current input field
+    function setEmployee(username) {
+        document.getElementById('username').value = username;
+        // Open the modal
+        const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+        passwordModal.show();
+    }
+
+    // Close modal and redirect to employee selection
+    function closeModalAndRedirect() {
+        window.location.href = "{% url 'emp:employee_selection' %}"; // Redirect to employee selection page
+    }
+
+    // Initialize the keyboard when the modal is shown
+    document.addEventListener('DOMContentLoaded', () => {
+        createKeyboard();
+        document.getElementById('closeModalBtn').addEventListener('click', closeModalAndRedirect); // Close button event
+    });
+</script>
+{% endblock %}
