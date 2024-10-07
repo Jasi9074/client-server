@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-
     @keyframes blink {
         0% {
             opacity: 1;
@@ -22,57 +21,80 @@
         height: 270px;
         margin: 10px;
         padding: 10px;
+        border: 1px solid #000;
         background-color: #27ae60; /* Green for active */
         border-radius: 10px;
         text-align: center;
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
-    
 
     .employee-card.logged-out {
         background-color: #c0392b; /* Red for logged-out */
         animation: blink 1s infinite;
     }
 
-    
-.employee-card h5 {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-    color: #000;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    width: 80%;
-}
-    
+    .employee-card h5 {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(255, 255, 255, 1); /* Solid white background */
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        width: 80%;
+        border: 1px solid #000; /* Black border */
+    }
 
-.employee-card img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    margin-top: 40px; /* Space below the name box */
-}
+    .employee-card img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 1px solid #000;
+        margin-top: 40px; /* Space below the name box */
+    }
 
-    .employee-card .issue-box {
+    .combined-box {
         background-color: white;
         color: black;
-        padding: 5px 10px;
-        border-radius: 50px;
-        font-size: 12px;
-        display: inline-block;
-        margin-top: 5px;
-        text-align: center;
-        max-width: 80%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        padding: 10px; /* Padding for spacing around the box */
+        border-radius: 5px; /* Rounded corners for a rectangular look */
+        border: 2px solid #000; /* Black border */
+        text-align: center; /* Center text */
+        width: 80%; /* Make the box take the full width available */
+        margin-top: 15px; /* Space above the combined box */
+        display: flex; /* Use flexbox for alignment */
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items horizontally */
     }
+    
+    .employee-card .issue-box {
+        background-color: white; /* Maintain white background */
+        width:80%;
+        color: black; /* Text color */
+        padding: 5px 10px; /* Padding for spacing */
+        border-radius: 5px; /* Rounded corners */
+        font-size: 14px; /* Font size */
+        margin-top: 4px; /* Reduced space above the issue box */
+        margin-bottom: 10px; /* Optional: Add space below for better separation */
+        text-align: center; /* Center text */
+        width: 100%; /* Full width of the combined box */
+        border: 1px solid #000; /* Thin black border (1px) */
+    }
+    
+    .employee-card .machine-number-box{
+        background-color:white;
+        color:black;
+        font-size:20;
+        text-align:center;
+        margin-top: 4px;
+        
+    }
+    
+
 
     #passwordModal .modal-dialog {
         max-width: 600px;
@@ -106,6 +128,14 @@
         align-items: center;
     }
 
+    #passwordModal .modal-body input[type="password"] {
+        width: 50%; /* Decreased width for a smaller box */
+        padding: 5px; /* Maintain padding */
+        border: 2px solid #000; /* Black border */
+        border-radius: 5px; /* Optional: rounded corners */
+        font-size: 14px; /* Adjust font size if needed */
+    }
+
     .arrow-btn {
         background-color: #28a745;
         color: white;
@@ -124,6 +154,7 @@
     }
 
     #keyboard-container {
+        display: none; /* Initially hide the keyboard */
         margin-top: 10px;
         display: flex;
         flex-direction: column;
@@ -185,6 +216,10 @@
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Cards will resize */
         gap: 20px;
     }
+
+    .employee-icon {
+        margin-left: 10px; /* Space between text and icon */
+    }
 </style>
 
 <div class="employee-container">
@@ -192,7 +227,7 @@
     <div class="employee-card {% if item.employee.is_working %}logged-out{% endif %}"
          data-bs-toggle="modal"
          data-bs-target="#passwordModal"
-         onclick="setEmployee('{{ item.employee.user.username }}')">
+         onclick="setEmployee('{{ item.employee.user.username }}', '{{ item.employee.name }}')">
 
         <h5>{{ item.employee.name }}</h5> <!-- Employee name at the top -->
 
@@ -203,13 +238,11 @@
         {% endif %}
 
         {% if item.employee.is_working and item.session %}
+            <div class="machine-number-box">{{item.session.machine}}</div>
             <div class="issue-box">{{ item.session.issue }}</div>
         {% endif %}
     </div>
     {% endfor %}
-</div>
-
-
 </div>
 
 <!-- Password Modal -->
@@ -218,7 +251,10 @@
         <div class="modal-content">
             <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close">&times;</button>
             <div class="modal-header">
-                <h5 class="modal-title" id="passwordModalLabel">Log In</h5>
+                <h5 class="modal-title" id="passwordModalLabel">
+                    Log In <i class="fas fa-user employee-icon"></i> <!-- Employee icon right after the log in text -->
+                    <span id="employeeNameSpan"></span> <!-- Employee name will be shown here -->
+                </h5>
             </div>
             <form method="POST" action="{% url 'emp:employee_selection' %}" id="loginForm">
                 {% csrf_token %}
@@ -245,70 +281,138 @@
     </div>
 </div>
 
+
+<!-- Password Reset Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'emp:reset_password' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <script>
-    let currentInput = "password"; // Default focus on password
+// Virtual Keyboard JavaScript
+let currentInput = "password"; // Default focus on password
 
-    // Create virtual keyboard layout inside password modal
-    function createKeyboard() {
-        const keyboardContainer = document.getElementById('keyboard-container');
-        const keys = [
-            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], // Numbers
-            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], // Uppercase letters
-            ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'], // Uppercase letters
-            ['U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd'], // Uppercase letters
-            ['e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'],  // Lowercase letters
-            ['o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x'], // Lowercase letters
-            ['y', 'z', '@', '&', 'Backspace'] // Lowercase letters
-        ];
+// Create virtual keyboard layout inside password modal
+function createKeyboard() {
+    const keyboardContainer = document.getElementById('keyboard-container');
+    const keys = [
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], // Numbers
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], // Uppercase letters
+        ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'], // Uppercase letters
+        ['U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd'], // Uppercase letters
+        ['e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'], // Lowercase letters
+        ['o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x'], // Lowercase letters
+        ['y', 'z', '@', '&', 'Backspace'] // Lowercase letters
+    ];
 
-        keys.forEach(rowKeys => {
-            const row = document.createElement('div');
-            row.className = 'virtual-keyboard';
-            keyboardContainer.appendChild(row);
+    keys.forEach(rowKeys => {
+        const row = document.createElement('div');
+        row.className = 'virtual-keyboard';
+        keyboardContainer.appendChild(row);
 
-            rowKeys.forEach(key => {
-                const button = document.createElement('button');
-                button.textContent = key === 'Backspace' ? '⮨' : key; // Change Backspace to an arrow symbol
-                button.onclick = (event) => {
-                    event.preventDefault(); // Prevent default action
-                    handleKeyPress(key);
-                };
-                row.appendChild(button);
-            });
+        rowKeys.forEach(key => {
+            const button = document.createElement('button');
+            button.textContent = key === 'Backspace' ? '⮨' : key; // Change Backspace to an arrow symbol
+            button.onclick = (event) => {
+                event.preventDefault(); // Prevent default action
+                handleKeyPress(key);
+            };
+            row.appendChild(button);
         });
-    }
-
-    // Handle key press from virtual keyboard
-    function handleKeyPress(key) {
-        const inputElement = document.getElementById(currentInput);
-
-        if (key === 'Backspace') {
-            inputElement.value = inputElement.value.slice(0, -1); // Remove the last character
-        } else {
-            inputElement.value += key; // Add the character
-        }
-
-        // Keep focus on the input field
-        inputElement.focus();
-    }
-
-    // Set the current input field
-    function setEmployee(username) {
-        document.getElementById('username').value = username;
-        // Open the modal
-        const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
-        passwordModal.show();
-    }
-
-    // Close modal and redirect to employee selection
-    function closeModalAndRedirect() {
-        window.location.href = "{% url 'emp:employee_selection' %}"; // Redirect to employee selection page
-    }
-
-    // Initialize the keyboard when the modal is shown
-    document.addEventListener('DOMContentLoaded', () => {
-        createKeyboard();
-        document.getElementById('closeModalBtn').addEventListener('click', closeModalAndRedirect); // Close button event
     });
+
+    keyboardContainer.style.display = "none"; // Hide keyboard initially
+}
+
+// Handle key press from virtual keyboard
+function handleKeyPress(key) {
+    const inputElement = document.getElementById(currentInput);
+
+    if (key === 'Backspace') {
+        inputElement.value = inputElement.value.slice(0, -1); // Remove the last character
+    } else {
+        inputElement.value += key; // Add the character
+    }
+
+    // Keep focus on the input field
+    inputElement.focus();
+}
+
+// Set the current input field and show the password modal
+function setEmployee(username, name) {
+    document.getElementById("username").value = username;
+    document.getElementById("employeeNameSpan").innerHTML = name;
+
+    // Open the modal
+    const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    passwordModal.show();
+
+    // Show the virtual keyboard when the modal is displayed
+    const keyboardContainer = document.getElementById('keyboard-container');
+    keyboardContainer.style.display = "none"; // Ensure it's hidden initially
+}
+
+// Show the virtual keyboard and log in
+function showKeyboardAndLogin() {
+    const keyboardContainer = document.getElementById('keyboard-container');
+    keyboardContainer.style.display = "flex"; // Show the virtual keyboard
+}
+
+// Close modal and redirect to employee selection
+function closeModalAndRedirect() {
+    window.location.href = "{% url 'emp:employee_selection' %}"; // Redirect to employee selection page
+}
+
+// Initialize the keyboard when the modal is shown
+document.addEventListener('DOMContentLoaded', () => {
+    createKeyboard();
+    document.getElementById('closeModalBtn').addEventListener('click', closeModalAndRedirect); // Close button event
+
+    // Attach the showKeyboardAndLogin function to the arrow button click
+    document.querySelector('.arrow-btn').addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent default form submission
+        
+        const password = document.getElementById('password').value; // Get the password input value
+        const username = document.getElementById('username').value; // Get the username input value
+
+        if (password.trim() !== '') { // Ensure password is not empty
+            document.getElementById('loginForm').submit(); // Submit the form if the password is entered
+        } else {
+            showKeyboardAndLogin(); // Show the virtual keyboard if no password entered
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // Check if the reset password flag is false and show the reset password modal
+    const shouldShowResetModal = {{ user.employee.reset_password_flag|yesno:"false,true" }}; 
+    if (!shouldShowResetModal) {
+        const resetPasswordModal = new bootstrap.Modal(document.getElementById('resetPasswordModal'));
+        resetPasswordModal.show();
+    }
+});
+
+});
+
 </script>
+
 {% endblock %}
+

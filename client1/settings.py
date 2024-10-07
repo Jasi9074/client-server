@@ -144,3 +144,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 USE_L10N = True # Local time formatting
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.your_email_provider.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@domain.com'
+EMAIL_HOST_PASSWORD = 'your_email_password'
+

@@ -7,10 +7,10 @@ app_name = 'emp'
 # URL Patterns
 urlpatterns = [
     # path('', views.welcome_page, name='welcome'),
-    path('login/', views.login_page, name='login'),
+    #path('login/', views.login_page, name='login'),
     path('', views.server_page, name='server'),
     # path('client/', views.user_login, name='client'),
-    path('dashboard/',views.dashboard,name = 'dashboard'),
+    #path('dashboard/',views.dashboard,name = 'dashboard'),
     path('start/', views.start_work, name='start_work'),
     path('end/<int:session_id>/', views.end_work, name='end_work'),
     #path('pause/<int:session_id>/', views.pause_work, name='pause_work'),
@@ -19,8 +19,8 @@ urlpatterns = [
     path('server-login/',views.server_login,name = 'server_login'),
     #path('login/',views.user_login,name = 'user_login'),
     path('logout/',views.user_logout ,name = 'user_logout'),
-    path('register/',views.register,name = 'register'),
-    path('goodbye/',views.goodbye,name = 'goodbye'),
+    #path('register/',views.register,name = 'register'),
+    #path('goodbye/',views.goodbye,name = 'goodbye'),
     path('employee_selection/', views.employee_selection, name='employee_selection'),
     #path('password_login/', views.password_login, name='password_login'),
     path('dashboard/', views.dashboard, name='dashboard'),
@@ -30,5 +30,5 @@ urlpatterns = [
     path('logout_and_redirect/', views.logout_and_redirect, name='logout_and_redirect'),
     path('save_complaint/', views.save_complaint, name='save_complaint'),
     path('tempend/', views.temp_end_work, name='temp_end_work'), # temp fix
-
+    path('reset-password/', views.reset_password_view, name='reset_password'),
 ]

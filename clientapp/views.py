@@ -261,6 +261,24 @@ def logout_and_redirect(request):
     logout(request)
     return redirect('emp:employee_selection')
 
+def reset_password_view(request):
+    employee = request.user.employee  # Assuming a one-to-one relationship with User
+    
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        
+        # Reset password logic here
+        request.user.set_password(new_password)
+        request.user.save()
+        
+        # Set reset_password_flag to True so the employee can't reset again
+        employee.reset_password_flag = True
+        employee.save()
+        
+        return redirect('emp:employee_selection')  # Redirect to employee selection after reset
+    
+    return render(request, 'emp/reset_password.html')
+
 def save_complaint(request):
     if request.method == 'POST':
         try:
