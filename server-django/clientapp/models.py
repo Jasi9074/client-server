@@ -15,7 +15,7 @@ class Employee(models.Model):
     is_working = models.BooleanField(default=False)
 
     def __str__(self):
-        return "profile {}".format(self.user.username)
+        return "{}".format(self.user.username)
 
 
 class WorkSession(models.Model):
@@ -35,8 +35,13 @@ class WorkSession(models.Model):
 
 
     def duration(self):
+        """Calculate duration of the work session in a readable format."""
         if self.end_time:
-            return self.end_time - self.start_time
-        #if self.paused and self.pause_time:
-            #return self.pause_time - self.start_time
-        #return timezone.now() - self.start_time
+            duration = self.end_time - self.start_time
+        else:
+            duration = timezone.now() - self.start_time
+
+        total_seconds = duration.total_seconds()
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{int(hours)}h {int(minutes)}m"
