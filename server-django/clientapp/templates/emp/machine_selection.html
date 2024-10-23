@@ -3,57 +3,95 @@
 
 {% block content %}
 <style>
-    .option-box {
-        background-color: #f8f9fa;
-        border: 2px solid #dee2e6;
-        border-radius: 15px;
-        padding: 40px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+    /* Container adjustments */
+.option-box {
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    padding: 5%; /* Use percentage for responsive padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%; /* Ensure the box fits within the screen width */
+    margin: 0 auto; /* Center the box */
+}
 
+/* Responsive machine buttons */
+.machine-button {
+    background-color: #8B0000; /* Dark red */
+    color: white;
+    font-size: 1.2rem; /* Relative font size for responsiveness */
+    font-weight: bold;
+    padding: 1.2rem 0.5rem; /* Increase padding to make buttons larger for touch */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    width: 100%; /* Ensure the button takes up full width of its container */
+}
+
+.machine-button:hover {
+    transform: scale(1.05);
+    background-color: #600000; /* Darker red on hover */
+}
+
+.machine-button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Adjust the number of buttons per row dynamically */
+    gap: 15px; /* Spacing between buttons */
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* Responsive back button */
+.back-button {
+    background-color: gray;
+    color: white;
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 20px;
+}
+
+/* Modal adjustments */
+.modal-title {
+    text-align: center;
+    width: 100%;
+}
+
+.start-time-container {
+    text-align: left;
+}
+
+.start-time-box {
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
     .machine-button {
-        background-color: #8B0000; /* Dark red */
-        color: white;
-        font-size: 16px; /* Smaller button text */
-        font-weight: bold;
-        padding: 10px; /* Smaller buttons */
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .machine-button:hover {
-        transform: scale(1.05);
-        background-color: #600000; /* Darker red on hover */
-    }
-
-    .machine-button:focus {
-        outline: none;
+        font-size: 1rem; /* Smaller font size on small screens */
+        padding: 0.8rem 0.4rem; /* Smaller padding */
     }
 
     .machine-button-container {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr); /* 6 buttons per row */
-        gap: 15px; /* Spacing between buttons */
-        justify-content: center;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* More buttons per row on small screens */
     }
 
     .back-button {
-        background-color: gray;
-        color: white;
-        font-size: 18px;
-        padding: 10px 20px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
+        font-size: 1.2rem;
     }
 
-    .back-button:hover {
-        background-color: #505050;
+    .start-time-box {
+        font-size: 14px;
     }
+}
 
     /* Center End of Task */
     .modal-title {
@@ -76,7 +114,7 @@
     .start-time-box {
         background-color: #f0f0f0;
         padding: 10px 20px;
-        border-radius: 50px; /* Oval shape */
+        border-radius: 5px; /* Oval shape */
         box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
         font-weight: bold;
         font-size: 16px;
@@ -113,13 +151,32 @@
         <form method="post" action="{% url 'emp:select_machine' %}">
             {% csrf_token %}
             <div class="machine-button-container">
-                {% for i in range %}
-                <button type="submit" class="machine-button" name="machine" value="{{ i }}">
-                    M{{ i }}
-                </button>
-                {% endfor %}
+                <!-- Individual machine buttons without for loop -->
+                <button type="submit" class="machine-button" name="machine" value="M1">M1</button>
+                <button type="submit" class="machine-button" name="machine" value="M2">M2</button>
+                <button type="submit" class="machine-button" name="machine" value="M3">M3</button>
+                <button type="submit" class="machine-button" name="machine" value="M4">M4</button>
+                <button type="submit" class="machine-button" name="machine" value="M5">M5</button>
+                <button type="submit" class="machine-button" name="machine" value="M6">M6</button>
+                <button type="submit" class="machine-button" name="machine" value="M7">M7</button>
+                <button type="submit" class="machine-button" name="machine" value="M8">M8</button>
+                <button type="submit" class="machine-button" name="machine" value="M9">M9</button>
+                <button type="submit" class="machine-button" name="machine" value="M10">M10</button>
+                <button type="submit" class="machine-button" name="machine" value="M11">M11</button>
+                <button type="submit" class="machine-button" name="machine" value="M12">M12</button>
+                <button type="submit" class="machine-button" name="machine" value="M13">M13</button>
+                <button type="submit" class="machine-button" name="machine" value="M14">M14</button>
+                <button type="submit" class="machine-button" name="machine" value="M15">M15</button>
+                <button type="submit" class="machine-button" name="machine" value="M16">M16</button>
+                <button type="submit" class="machine-button" name="machine" value="M17">M17</button>
+                <button type="submit" class="machine-button" name="machine" value="M18">M18</button>
+                <button type="submit" class="machine-button" name="machine" value="M19">M19</button>
+                <button type="submit" class="machine-button" name="machine" value="M20">M20</button>
+                <button type="submit" class="machine-button" name="machine" value="M21">M21</button>
+                <button type="submit" class="machine-button" name="machine" value="M22">M22</button>
+                <button type="submit" class="machine-button" name="machine" value="M23">M23</button>
+                <button type="submit" class="machine-button" name="machine" value="M24">M24</button>
             </div>
-            <div>
                 <button type="button" class="back-button" onclick="window.location.href='{% url 'emp:employee_selection' %}'">Back</button>
             </div>
         </form>
