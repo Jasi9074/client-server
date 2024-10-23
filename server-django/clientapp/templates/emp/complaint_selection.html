@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h1>You selected M{{ page_id }}</h1>
+    <h1>You selected {{ page_id }}</h1>
 
     <!-- Large container box with border -->
     <div class="bordered-container p-4">
@@ -11,26 +11,217 @@
             <!-- Buttons for selecting a complaint arranged in columns and rows -->
             <div class="container">
                 <div class="row">
-                    {% for i in complaints %}
+                    <!-- Complaint 1 -->
                     <div class="col-md-4 mb-1">
-                        <!-- Each column is a complaint button -->
                         <div class="complaint-container">
-                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint{{ i }}">
-                                Complaint {{ i }}
-                                <span class="text-success">&#x2192;</span>
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint1">
+                                Complaint 1
                             </button>
-                            <div class="issues-list" id="complaint{{ i }}" style="display: none;">
+                            <div class="issues-list" id="complaint1" style="display: none;">
                                 <div class="d-flex justify-content-center">
                                     <ul class="list-group cute-list w-100">
-                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">Issue 1</li>
-                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Issue 2</li>
-                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Issue 3</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+
+                    <!-- Complaint 2 -->
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint2">
+                                Complaint 2
+                            </button>
+                            <div class="issues-list" id="complaint2" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repeat similarly for Complaints 3 to 12 -->
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint3">
+                                Complaint 3
+                            </button>
+                            <div class="issues-list" id="complaint3" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Continue with Complaint 4 through Complaint 12 -->
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint4">
+                                Complaint 4
+                            </button>
+                            <div class="issues-list" id="complaint4" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Continue in this manner for Complaint 5 to Complaint 12 -->
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint5">
+                                Complaint 5
+                            </button>
+                            <div class="issues-list" id="complaint5" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint6">
+                                Complaint 6
+                            </button>
+                            <div class="issues-list" id="complaint6" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint7">
+                                Complaint 7
+                            </button>
+                            <div class="issues-list" id="complaint7" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint8">
+                                Complaint 8
+                            </button>
+                            <div class="issues-list" id="complaint8" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint9">
+                                Complaint 9
+                            </button>
+                            <div class="issues-list" id="complaint9" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint10">
+                                Complaint 10
+                            </button>
+                            <div class="issues-list" id="complaint10" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint11">
+                                Complaint 11
+                            </button>
+                            <div class="issues-list" id="complaint11" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Complaint 12 -->
+                    <div class="col-md-4 mb-1">
+                        <div class="complaint-container">
+                            <button class="btn btn-dark-red w-100 d-flex justify-content-between align-items-center complaint-btn" data-complaint="complaint12">
+                                Complaint 12
+                            </button>
+                            <div class="issues-list" id="complaint12" style="display: none;">
+                                <div class="d-flex justify-content-center">
+                                    <ul class="list-group cute-list w-100">
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 1">General Failure</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 2">Software Issue</li>
+                                        <li class="list-group-item cute-list-item" data-issue="Issue 3">Machine Complaint</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -82,7 +273,7 @@
         display: none;
         background-color: #f2f2f2;
         border: 2px solid #ff4500;
-        border-radius: 8px;
+        border-radius: 5px;
         padding: 10px;
         width: 100%;
         z-index: 1000;
@@ -102,7 +293,7 @@
 
     .cute-list-item {
         background-color: #fff5f5;
-        border-radius: 8px;
+        border-radius: 5px;
         margin: 5px 0;
         padding: 15px;
         cursor: pointer;
@@ -212,3 +403,5 @@
 </script>
 
 {% endblock %}
+
+
