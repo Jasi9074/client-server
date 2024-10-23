@@ -6,6 +6,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+
 from django.utils import timezone
 from itertools import groupby
 from datetime import date
@@ -227,7 +229,7 @@ def employee_selection(request):
                 return HttpResponseRedirect(reverse("emp:machine_selection"))
             else:
                 return HttpResponse("User is not active")
-        else:
+        else: 
             # Show error if authentication fails
             messages.error(request, "Invalid password. Please try again.")
             return HttpResponseRedirect(reverse("emp:employee_selection"))
