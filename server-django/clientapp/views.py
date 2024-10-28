@@ -95,33 +95,6 @@ def end_work(request, session_id):
     return redirect("emp:dashboard")
 
 @login_required
-def pause_work(request, session_id):
-    session = WorkSession.objects.get(id=session_id)
-    session.paused = True
-    session.pause_time = timezone.now()
-    session.save()
-    return redirect("emp:dashboard")
-
-@login_required
-def resume_work(request, session_id):
-    session = WorkSession.objects.get(id=session_id)
-    if session.paused:
-        pause_duration = timezone.now() - session.pause_time
-        session.start_time += pause_duration
-        session.paused = False
-        session.pause_time = None
-        session.save()
-    return redirect("emp:dashboard")
-
-@login_required
-def update_session_description(request, session_id):
-    if request.method == "POST":
-        session = get_object_or_404(WorkSession, id=session_id)
-        session.description = request.POST.get("description", "")
-        session.save()
-    return redirect("emp:dashboard")
-
-@login_required
 def dashboard(request):
     if request.user.is_authenticated:
         employee = Employee.objects.get(user=request.user)
@@ -229,7 +202,7 @@ def employee_selection(request):
                 return HttpResponseRedirect(reverse("emp:machine_selection"))
             else:
                 return HttpResponse("User is not active")
-        else: 
+        else:
             # Show error if authentication fails
             messages.error(request, "Invalid password. Please try again.")
             return HttpResponseRedirect(reverse("emp:employee_selection"))
