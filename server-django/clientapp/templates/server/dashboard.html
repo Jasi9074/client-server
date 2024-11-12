@@ -14,9 +14,9 @@
   <p>Your trusted partner in employee management.</p>
 </div>
 
-<section class="container">
+<section class="container row">
 
-  <div class="card p-3 shadow" style="width: 18rem;">
+  <div class="col card p-3 m-3 shadow">
     <div class="display-1 text-center"><i class="fas fa-calendar-days"></i></div>
     <div class="card-body">
       <h5 class="card-title">Date Today</h5>
@@ -24,6 +24,24 @@
     </div>
   </div>
 
+  <!-- Requested Employees List -->
+  <div class="col card p-3 m-3 shadow">
+    <div class="card-body">
+      <h5 class="card-title">Password Reset Requests</h5>
+      {% if requested_employees %}
+      <ul class="list-group">
+        {% for employee in requested_employees %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ employee.name }}</span>
+          <span class="badge bg-primary text-white">{{ employee.confirmation_passcode }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted">No password reset requests at the moment.</p>
+      {% endif %}
+    </div>
+  </div>
 </section>
 
 {% endblock %}

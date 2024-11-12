@@ -22,6 +22,11 @@ class Employee(models.Model):
         self.password_reset_requested = True
         self.save()
 
+    def clear_passcode(self):
+        self.confirmation_passcode = None
+        self.password_reset_requested = False
+        self.save()
+
     def __str__(self):
         return "{}".format(self.user.username)
 

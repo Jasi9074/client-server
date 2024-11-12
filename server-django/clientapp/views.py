@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from django.utils import timezone
-from itertools import groupby
-from datetime import date, datetime
+from .utils import get_requested_employees
 import json
 
 # for Password change
@@ -38,11 +37,14 @@ def server_login(request):
 @login_required
 def server_dashboard(request):
     if request.user.is_authenticated:
-        today = date.today().strftime("%Y-%m-%d")
-        time = datetime.now().strftime("%H:%M")
+        today = timezone.now().strftime("%Y-%m-%d")
+        time = timezone.now().strftime("%H:%M")
+
+        requested_employees = get_requested_employees()
         context = {
             "today": today,
             "time": time,
+            "requested_employees": requested_employees,
         }
         return render(request, "server/dashboard.html", context)
     else:
@@ -163,7 +165,7 @@ def verify_passcode(request, username):
     if request.method == 'POST':
         entered_passcode = request.POST.get('passcode')
         if employee.confirmation_passcode == entered_passcode:
-            return redirect('emp:custom_password_reset', username=username)
+            return redirect('emp:password_reset', username=username)
         else:
             messages.error(request, "Invalid passcode. Please try again.")
     return render(request, 'emp/password_otp.html', {'username': username})
@@ -178,6 +180,8 @@ def custom_password_reset(request, username):
                 user = get_object_or_404(User, username=username)
                 user.password = make_password(new_password)
                 user.save()
+                employee = get_object_or_404(Employee, user__username=username)
+                employee.clear_passcode()
                 return redirect('emp:employee_selection')
             else:
                 messages.error(request, "Passwords do not match.")
