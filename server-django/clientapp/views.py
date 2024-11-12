@@ -10,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 
 from django.utils import timezone
 from itertools import groupby
-from datetime import date
+from datetime import date, datetime
 import json
 
 
@@ -33,9 +33,11 @@ def server_login(request):
 @login_required
 def server_dashboard(request):
     if request.user.is_authenticated:
-        today = date.today()
+        today = date.today().strftime("%Y-%m-%d")
+        time = datetime.now().strftime("%H:%M")
         context = {
             "today": today,
+            "time": time,
         }
         return render(request, "server/dashboard.html", context)
     else:
