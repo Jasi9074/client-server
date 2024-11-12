@@ -6,12 +6,17 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
 
 from django.utils import timezone
 from itertools import groupby
 from datetime import date, datetime
 import json
+
+# for Password change
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.urls import reverse
+from django.contrib.auth.hashers import make_password
 
 
 def server_login(request):
@@ -142,6 +147,23 @@ def goodbye(request):
     if not username:
         username = "User"
     return render(request, "emp/goodbye.html", {"username": username})
+
+
+def custom_password_reset(request, username):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        if new_password and confirm_password:
+            if new_password == confirm_password:
+                user = get_object_or_404(User, username=username)
+                user.password = make_password(new_password)
+                user.save()
+                return redirect('emp:employee_selection')
+            else:
+                messages.error(request, "Passwords do not match.")
+        else:
+            messages.error(request, "Please enter both password fields.")
+    return render(request, 'emp/password_reset.html', {'username': username})
 
 
 def machine_selection(request):

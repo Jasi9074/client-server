@@ -26,4 +26,5 @@ urlpatterns = [
     path('logout_and_redirect/', views.logout_and_redirect, name='logout_and_redirect'),
     path('save_complaint/', views.save_complaint, name='save_complaint'),
     path('tempend/', views.temp_end_work, name='temp_end_work'), # temp fix
+    path('password_reset/<str:username>/', views.custom_password_reset, name='password_reset'),
 ]
