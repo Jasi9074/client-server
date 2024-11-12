@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+import random
 
 
 def user_directory_path(self, filename):
@@ -13,6 +14,13 @@ class Employee(models.Model):
     name = models.CharField(max_length=255)
     photo = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
     is_working = models.BooleanField(default=False)
+    password_reset_requested = models.BooleanField(default=False)
+    confirmation_passcode = models.CharField(max_length=6, null=True, blank=True)
+
+    def generate_passcode(self):
+        self.confirmation_passcode = str(random.randint(100000, 999999))
+        self.password_reset_requested = True
+        self.save()
 
     def __str__(self):
         return "{}".format(self.user.username)

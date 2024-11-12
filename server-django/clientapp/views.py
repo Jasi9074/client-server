@@ -149,6 +149,26 @@ def goodbye(request):
     return render(request, "emp/goodbye.html", {"username": username})
 
 
+def request_passcode(request, username):
+    """Generates a passcode for the employee if a password reset is requested."""
+    employee = get_object_or_404(Employee, user__username=username)
+    if not employee.password_reset_requested:
+        employee.generate_passcode()
+    return redirect('emp:employee_selection')
+
+
+def verify_passcode(request, username):
+    """Verifies the passcode entered by the employee."""
+    employee = get_object_or_404(Employee, user__username=username)
+    if request.method == 'POST':
+        entered_passcode = request.POST.get('passcode')
+        if employee.confirmation_passcode == entered_passcode:
+            return redirect('emp:custom_password_reset', username=username)
+        else:
+            messages.error(request, "Invalid passcode. Please try again.")
+    return render(request, 'emp/password_otp.html', {'username': username})
+
+
 def custom_password_reset(request, username):
     if request.method == 'POST':
         new_password = request.POST.get('new_password')

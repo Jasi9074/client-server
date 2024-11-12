@@ -264,7 +264,12 @@
     <div class="machine-number-box">{{item.session.machine}}</div>
     <div class="issue-box">{{ item.session.issue }}</div>
     {% endif %}
-    <a href="{% url 'emp:password_reset' username=item.employee.user.username %}" class="text-muted small float-right">Forgot Password?</a>
+
+    {% if item.employee.password_reset_requested %}
+    <a href="{% url 'emp:verify_passcode' username=item.employee.user.username %}" class="text-muted small mt-2">Reset Password</a>
+    {% else %}
+    <a href="{% url 'emp:request_passcode' username=item.employee.user.username %}" class="text-muted small mt-2">Forgot Password?</a>
+    {% endif %}
   </div>
   {% endfor %}
 </div>
