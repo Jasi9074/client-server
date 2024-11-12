@@ -15,7 +15,31 @@ import json
 
 
 def server_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("emp:dashboard")
+        else:
+            messages.error(request, "Invalid credentials or insufficient privileges.")
+            return redirect("server_login")
+
     return render(request, "server/login.html")
+
+
+@login_required
+def server_dashboard(request):
+    if request.user.is_authenticated:
+        today = date.today()
+        context = {
+            "today": today,
+        }
+        return render(request, "server/dashboard.html", context)
+    else:
+        return HttpResponseRedirect(reverse("emp:server_login"))
 
 
 def login_page(request):
@@ -102,29 +126,6 @@ def end_work(request, session_id):
     session.end_time = timezone.now()
     session.save()
     return redirect("emp:dashboard")
-
-
-@login_required
-def dashboard(request):
-    if request.user.is_authenticated:
-        employee = Employee.objects.get(user=request.user)
-        sessions = WorkSession.objects.filter(employee=employee).order_by("-start_time")
-
-        sessions_grouped_by_day = {}
-        for day, group in groupby(sessions, key=lambda s: s.start_time.date()):
-            sessions_grouped_by_day[day] = list(group)
-
-        latest_session = sessions.first()
-        today = date.today()
-
-        context = {
-            "latest_session": latest_session,
-            "sessions_grouped_by_day": sessions_grouped_by_day,
-            "today": today,
-        }
-        return render(request, "emp/dashboard.html", context)
-    else:
-        return HttpResponseRedirect(reverse("emp:employee_selection"))
 
 
 @login_required
