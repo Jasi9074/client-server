@@ -6,9 +6,11 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count
 
 from django.utils import timezone
 from .utils import get_requested_employees
+from datetime import timedelta
 import json
 
 # for Password change
@@ -36,19 +38,40 @@ def server_login(request):
 
 @login_required
 def server_dashboard(request):
-    if request.user.is_authenticated:
-        today = timezone.now().strftime("%Y-%m-%d")
-        time = timezone.now().strftime("%H:%M")
-
-        requested_employees = get_requested_employees()
-        context = {
-            "today": today,
-            "time": time,
-            "requested_employees": requested_employees,
-        }
-        return render(request, "server/dashboard.html", context)
-    else:
+    if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("emp:server_login"))
+
+    today = timezone.now().date()
+    time = timezone.now().strftime("%H:%M")
+
+    # Total employees
+    total_employees = Employee.objects.count()
+
+    # Active employees and password reset requests
+    active_employees = Employee.objects.filter(is_working=True).count()
+    requested_employees = Employee.objects.filter(password_reset_requested=True)
+
+    # Work session data
+    total_sessions_today = WorkSession.objects.filter(start_time__date=today).count()
+    unresolved_issues_count = WorkSession.objects.filter(issue__isnull=False, confirmed=False).count()
+
+    # Daily work session data (for charting)
+    last_week = today - timedelta(days=7)
+    daily_sessions = WorkSession.objects.filter(start_time__date__gte=last_week).values('start_time__date').annotate(
+        total_sessions=Count('id')
+    )
+
+    context = {
+        "today": today,
+        "time": time,
+        "total_employees": total_employees,
+        "active_employees": active_employees,
+        "total_sessions_today": total_sessions_today,
+        "unresolved_issues_count": unresolved_issues_count,
+        "daily_sessions": daily_sessions,
+        "requested_employees": requested_employees,
+    }
+    return render(request, "server/dashboard.html", context)
 
 
 def login_page(request):

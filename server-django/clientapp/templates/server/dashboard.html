@@ -15,7 +15,7 @@
 </div>
 
 <section class="container row">
-
+  <!-- Date Today -->
   <div class="col card p-3 m-3 shadow">
     <div class="display-1 text-center"><i class="fas fa-calendar-days"></i></div>
     <div class="card-body">
@@ -24,8 +24,21 @@
     </div>
   </div>
 
-  <!-- Requested Employees List -->
+  <!-- Employees Info -->
   <div class="col card p-3 m-3 shadow">
+    <div class="display-1 text-center"><i class="fas fa-users"></i></div>
+    <div class="card-body">
+      <h5 class="card-title">Employee Overview</h5>
+      <p class="mb-0">Total Employees: <b>{{ total_employees }}</b></p>
+      <p class="mb-0">Currently Active: <b>{{ active_employees }}</b></p>
+      <p class="mb-0">Sessions Today: <b>{{ total_sessions_today }}</b></p>
+      <p class="mb-0">Unresolved Issues: <b>{{ unresolved_issues_count }}</b></p>
+    </div>
+  </div>
+
+  <!-- Unresolved Issues and Password Requests -->
+  <div class="col card p-3 m-3 shadow">
+    <div class="display-1 text-center {% if requested_employees %}text-danger{% endif %}"><i class="fas fa-unlock"></i></div>
     <div class="card-body">
       <h5 class="card-title">Password Reset Requests</h5>
       {% if requested_employees %}
@@ -43,5 +56,42 @@
     </div>
   </div>
 </section>
+
+<!-- Daily Sessions Chart -->
+<section class="container row">
+  <div class="col card p-3 m-3 shadow">
+    <canvas class="row" id="dailySessionsChart"></canvas>
+  </div>
+</section>
+
+<!-- Include Chart.js -->
+<script src="{% static 'scripts/chart.js' %}"></script>
+<script>
+  const dailySessionsData = {
+    labels: [{% for session in daily_sessions %}"{{ session.start_time__date }}",{% endfor %}],
+    datasets: [{
+      label: "Daily Sessions",
+      backgroundColor: "rgba(54, 162, 235, 0.2)",
+      borderColor: "rgba(54, 162, 235, 1)",
+      borderWidth: 1,
+      data: [{% for session in daily_sessions %}{{ session.total_sessions }},{% endfor %}]
+    }]
+  };
+
+  const config = {
+    type: "line",
+    data: dailySessionsData,
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  new Chart(document.getElementById("dailySessionsChart"), config);
+</script>
 
 {% endblock %}
